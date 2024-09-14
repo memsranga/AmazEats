@@ -1,4 +1,5 @@
 ﻿using AmazEats;
+using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,10 @@ var cosmosDatabaseName = "AmazEats";
 
 
 builder.Services.AddControllers();
+builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
+{
+    return new CosmosClient(cosmosConnection);
+});
 builder.Services.AddDbContext<AmazEatsDbContext>(options =>
 {
     options.UseCosmos(cosmosConnection, cosmosDatabaseName);

@@ -18,7 +18,10 @@ namespace AmazEats
             var ordersEntity = modelBuilder.Entity<OrderEntity>();
             ordersEntity.HasKey(o => o.Id);
 
-            ordersEntity.ToContainer("Orders");
+            ordersEntity.ToContainer("Orders")
+                .HasPartitionKey(o => o.CafeId);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

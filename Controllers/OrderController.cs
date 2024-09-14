@@ -1,5 +1,6 @@
 ﻿using AmazEats.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 
 namespace AmazEats.Controllers;
@@ -13,14 +14,15 @@ public class OrderController : ControllerBase
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-    private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
     private readonly ILogger<OrderController> _logger;
     private readonly AmazEatsDbContext _context;
+    private readonly Container _container;
 
-    public OrderController(ILogger<OrderController> logger, AmazEatsDbContext context)
+    public OrderController(ILogger<OrderController> logger, AmazEatsDbContext context, CosmosClient client)
     {
         _logger = logger;
         _context = context;
+        _container = client.GetContainer("AmazEats", "Orders");
     }
 
     [HttpGet]
@@ -32,24 +34,14 @@ public class OrderController : ControllerBase
     [HttpPost]
     public async Task<OrderEntity> CreateAsync()
     {
-        await semaphore.WaitAsync();
-        try
+        var newOrder = new OrderEntity
         {
-            var allOrderCount = await _context.Orders.CountAsync();
-            var newOrder = new OrderEntity
-            {
-                Id = Guid.NewGuid().ToString(),
-                Number = allOrderCount + 1,
-                CreatedAt = DateTimeOffset.UtcNow,
-            };
-            var createdOrder = await _context.Orders.AddAsync(newOrder);
-            await _context.SaveChangesAsync();
-            return createdOrder.Entity;
-        }
-        finally
-        {
-            semaphore.Release();
-        }
+            Id = Guid.NewGuid().ToString(),
+            CafeId = "Cafe 1",
+            CreatedAt = DateTimeOffset.UtcNow,
+        };
+        var createdOrder = await _container.Scripts.ExecuteStoredProcedureAsync<OrderEntity>("insertOrder", new PartitionKey(newOrder.CafeId), new dynamic[] { newOrder });
+        return createdOrder.Resource;
     }
 }
 

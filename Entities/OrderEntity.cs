@@ -8,6 +8,7 @@ namespace AmazEats.Entities
 	{
 		public string Id { get; set; }
         public long Number { get; set; }
+        public String CafeId { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
     }
 }
