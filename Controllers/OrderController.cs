@@ -13,6 +13,8 @@ public class OrderController : ControllerBase
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
+    private static int GlobalOrderNumber = 0;
+
     private readonly ILogger<OrderController> _logger;
     private readonly AmazEatsDbContext _context;
 
@@ -31,10 +33,11 @@ public class OrderController : ControllerBase
     [HttpPost]
     public async Task<OrderEntity> CreateAsync()
     {
+        GlobalOrderNumber++;
         var newOrder = new OrderEntity
         {
             Id = Guid.NewGuid().ToString(),
-            Number = 1,
+            Number = GlobalOrderNumber,
             CreatedAt = DateTimeOffset.UtcNow,
         };
         var createdOrder = await _context.Orders.AddAsync(newOrder);
