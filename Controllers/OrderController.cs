@@ -13,6 +13,7 @@ public class OrderController : ControllerBase
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
+    private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
     private readonly ILogger<OrderController> _logger;
     private readonly AmazEatsDbContext _context;
 
@@ -31,16 +32,24 @@ public class OrderController : ControllerBase
     [HttpPost]
     public async Task<OrderEntity> CreateAsync()
     {
-        var allOrdersCount = await _context.Orders.CountAsync();
-        var newOrder = new OrderEntity
+        await semaphore.WaitAsync();
+        try
         {
-            Id = Guid.NewGuid().ToString(),
-            Number = allOrdersCount + 1,
-            CreatedAt = DateTimeOffset.UtcNow,
-        };
-        var createdOrder = await _context.Orders.AddAsync(newOrder);
-        await _context.SaveChangesAsync();
-        return createdOrder.Entity;
+            var allOrderCount = await _context.Orders.CountAsync();
+            var newOrder = new OrderEntity
+            {
+                Id = Guid.NewGuid().ToString(),
+                Number = allOrderCount + 1,
+                CreatedAt = DateTimeOffset.UtcNow,
+            };
+            var createdOrder = await _context.Orders.AddAsync(newOrder);
+            await _context.SaveChangesAsync();
+            return createdOrder.Entity;
+        }
+        finally
+        {
+            semaphore.Release();
+        }
     }
 }
 
