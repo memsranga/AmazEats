@@ -1,5 +1,4 @@
-# Solving LinkedIn Queens Game
-<a href="https://medium.com/@memsranga/implementing-auto-increment-in-cosmos-db-41b4abc961d2"><img src="https://github.com/user-attachments/assets/5faf2593-ca0a-4bcc-8767-dba6973c66ea" alt="Implementing Auto-Increment in Cosmos DB: Strategies and Best Practices" 
+<a href="https://medium.com/@memsranga/implementing-auto-increment-in-cosmos-db-41b4abc961d2"><img src="https://github.com/user-attachments/assets/b1c00504-44ad-48c6-a84f-f069442f5305" alt="Implementing Auto-Increment in Cosmos DB: Strategies and Best Practices" 
 style="width: 80%;" ></a>
 
 ## Read entire blog: https://medium.com/@memsranga/implementing-auto-increment-in-cosmos-db-41b4abc961d2
