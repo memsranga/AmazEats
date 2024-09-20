@@ -1,12 +1,12 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-
+using Newtonsoft.Json;
 
 namespace AmazEats.Entities
 {
 	public class OrderEntity
 	{
-		public string Id { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
         public long Number { get; set; }
         public String CafeId { get; set; }
         public DateTimeOffset CreatedAt { get; set; }

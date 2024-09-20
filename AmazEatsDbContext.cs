@@ -12,6 +12,7 @@ namespace AmazEats
         }
 
         public DbSet<OrderEntity> Orders { get; set; }
+        public DbSet<OrderNumberEntity> OrderNumbers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,6 +20,13 @@ namespace AmazEats
             ordersEntity.HasKey(o => o.Id);
 
             ordersEntity.ToContainer("Orders")
+                .HasPartitionKey(o => o.CafeId);
+
+
+            var orderNumbersEntity = modelBuilder.Entity<OrderNumberEntity>();
+            orderNumbersEntity.HasKey(o => o.Id);
+
+            orderNumbersEntity.ToContainer("OrderNumbers")
                 .HasPartitionKey(o => o.CafeId);
 
             base.OnModelCreating(modelBuilder);
